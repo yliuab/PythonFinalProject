@@ -1,0 +1,5 @@
+default_keyword: 灯具
+max_page_num: 2
+wait_time: 20
+root_url: https://www.jd.com
+save_prefix: jd_
