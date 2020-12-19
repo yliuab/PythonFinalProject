@@ -57,7 +57,7 @@ def commit_clear(p_commit):
         p_comment = p_commit[:-3]
     else:
         #格式形同「xx+条评论」的处理，xx不带万字
-        p_comment = p_commit[:-4]
+        p_comment = p_commit[:p_commit.find('+')]
     return p_comment
 
 def crawl_website(keyword,filename):
