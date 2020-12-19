@@ -5,16 +5,70 @@ import numpy as np
 import os
 import getopt
 import matplotlib.pyplot as plt
+from matplotlib import colors
+from matplotlib.ticker import PercentFormatter
+
 
 plt.rcParams['font.sans-serif']=['SimHei'] #用来正常显示中文标签
-plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
+plt.rcParams['axes.unicode_minus']=False #用来正常显示负号  
+
+
+def plot_name_comment_scatter(df):
+    #设置散点图数据
+    fig, ax = plt.subplots()
+    x = df['商品名称'].str.len()
+    y = df['评论数量']
+    ax.scatter(x, y, c='r', s=20+y/1000, alpha=0.3, edgecolors='none')
+
+    #设置图表信息
+    ax.set_xlabel('商品名长度')
+    ax.set_ylabel('评论数量')
+    ax.set_title('商品名长度-评论数量关系图')
+    ax.grid(True)
+
+
+def plot_price_comment_scatter(df):
+    #设置散点图数据
+    fig, ax = plt.subplots()
+    x = df['价格']
+    y = df['评论数量']
+    ax.scatter(x, y, c='g', s=50, alpha=0.3, edgecolors='none')
+
+    #设置图表信息 
+    ax.set_xlabel('价格')
+    ax.set_ylabel('评论数量')
+    ax.set_title('价格-评论数量关系图')
+    ax.grid(True)
+
 
 def plot_price_hist(df):
-    plt.hist(df['价格'], 50)
-    plt.xlabel('价格')
-    plt.ylabel('产品数量')
-    plt.title('价格直方图')
-    plt.grid(True)
+    fig, ax = plt.subplots(1, 1, tight_layout=True)
+
+    #得到数据总数，区间，个数
+    N, bins, patches = ax.hist(df['价格'], bins=50)
+
+    #设置颜色区分度
+    fracs = N / N.max()
+
+    #设置颜色分别
+    norm = colors.Normalize(fracs.min(), fracs.max())
+
+    #对每个区分度设置颜色
+    for thisfrac, thispatch in zip(fracs, patches):
+        color = plt.cm.viridis(norm(thisfrac))
+        thispatch.set_facecolor(color)
+
+    #设置直方图数据
+    ax.hist(df['价格'], bins=50, density=True)
+
+    #设置坐标格式
+    ax.yaxis.set_major_formatter(PercentFormatter(xmax=1))
+    
+    #设置图表信息
+    ax.set_xlabel('价格')
+    ax.set_ylabel('产品数量')
+    ax.set_title('价格直方图')
+    ax.grid(True)
 
 
 def plot_top_stores(df, top):
@@ -35,7 +89,7 @@ def plot_top_stores(df, top):
 
 
 def main(argv):
-    filename = 'jd_灯具_bak.csv'
+    filename = ''
     #尝试从参数中获取数据文件名
     try:
         opts, args = getopt.getopt(argv,"f:")
@@ -66,7 +120,11 @@ def main(argv):
     #画价格直方图
     plot_price_hist(df)
     #画店铺热度条形图
-    plot_top_stores(df, 5)
+    plot_top_stores(df, 10)
+    #画价格热度关系散点图
+    plot_price_comment_scatter(df)
+    #画商品名长度热度关系散点图
+    plot_name_comment_scatter(df)
     plt.show()
 
     
