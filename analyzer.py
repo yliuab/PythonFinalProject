@@ -59,10 +59,7 @@ def plot_price_hist(df):
         thispatch.set_facecolor(color)
 
     #设置直方图数据
-    ax.hist(df['价格'], bins=50, density=True)
-
-    #设置坐标格式
-    ax.yaxis.set_major_formatter(PercentFormatter(xmax=1))
+    ax.hist(df['价格'], bins=50, density=True)  
     
     #设置图表信息
     ax.set_xlabel('价格')
